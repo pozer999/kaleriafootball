@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Header() {
     return (
-        <header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+        <header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-10 sm:px-30 '>
             <div className='container flex h-16 items-center justify-between'>
                 <div className='flex items-center gap-6'>
                     <Link href='/' className='flex items-center space-x-2'>
@@ -18,7 +18,7 @@ export default function Header() {
                     {/* Desktop Navigation */}
                     <NavigationMenu className='hidden md:flex'>
                         <NavigationMenuList>
-                            <NavigationMenuItem>
+                            <NavigationMenuItem className='mr-10'>
                                 <Link href='/' passHref>
                                     Главная
                                 </Link>
@@ -45,7 +45,7 @@ export default function Header() {
                             </div>
                         </SheetTrigger>
                         <SheetContent>
-                            <div className='flex flex-col gap-4 mt-8'>
+                            <div className='flex flex-col gap-4 mt-8 ml-10'>
                                 <Link href='/' className='text-lg font-medium'>
                                     Главная
                                 </Link>

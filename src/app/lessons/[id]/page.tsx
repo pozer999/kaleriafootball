@@ -6,15 +6,18 @@ import { Calendar, Eye, Clock, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
-import { GalleryImage } from '@/app/types'
 
 interface LessonPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 async function getLesson(id: string) {
+  if (!id) return null;
+
+  console.log("id: ", id)
+  
   const lesson = await prisma.lesson.findUnique({
     where: { id },
     include: {
@@ -26,8 +29,10 @@ async function getLesson(id: string) {
       }
     }
   })
+  console.log("lesson: ", lesson)
 
-  if (!lesson) return null
+  if (!lesson) return null;
+
 
   // Increment views
   await prisma.lesson.update({
@@ -58,7 +63,10 @@ const levelColors = {
 }
 
 export default async function LessonPage({ params }: LessonPageProps) {
-  const lesson = await getLesson(params.id)
+  // В Next.js 15+ params нужно ожидать
+  const { id } = await params
+  
+  const lesson = await getLesson(id)
 
   if (!lesson) {
     notFound()
@@ -68,8 +76,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container py-8">
-        <Button variant="ghost" className="mb-8">
-          <Link href="/lessons">
+        <Button variant="ghost" asChild className="mb-8">
+          <Link href="/lessons" className="flex items-center justify-center gap-2">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Назад к урокам
           </Link>
@@ -93,15 +101,15 @@ export default async function LessonPage({ params }: LessonPageProps) {
             )}
           </div>
 
-          Title and Meta
+          {/* Title and Meta */}
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-4">
-              {/* <Badge variant="outline" className="text-lg px-4 py-1">
-                {categoryLabels[lesson.category]}
+              <Badge variant="outline" className="text-lg px-4 py-1">
+                {categoryLabels[lesson.category as keyof typeof categoryLabels]}
               </Badge>
-              <Badge className={`${levelColors[lesson.level]} text-white px-4 py-1`}>
-                {levelLabels[lesson.level]}
-              </Badge> */}
+              <Badge className={`${levelColors[lesson.level as keyof typeof levelColors]} text-white px-4 py-1`}>
+                {levelLabels[lesson.level as keyof typeof levelLabels]}
+              </Badge>
             </div>
             
             <h1 className="text-4xl font-bold mb-4">{lesson.title}</h1>
@@ -162,7 +170,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <div className="mb-12">
               <h2 className="text-2xl font-bold mb-4">Галерея</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {lesson.gallery.map((image: GalleryImage) => (
+                {lesson.gallery.map((image) => (
                   <div
                     key={image.id}
                     className="relative aspect-square rounded-lg overflow-hidden"
@@ -189,7 +197,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <div className="mb-8">
               <h2 className="text-lg font-semibold mb-3">Теги</h2>
               <div className="flex flex-wrap gap-2">
-                {lesson.tags.map((tag: string) => (
+                {lesson.tags.map((tag) => (
                   <Badge key={tag} variant="secondary">
                     #{tag}
                   </Badge>

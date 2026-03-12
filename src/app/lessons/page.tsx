@@ -15,7 +15,7 @@ export default function LessonsPage() {
     });
 
     return (
-        <div className='min-h-screen bg-background'>
+        <div className='min-h-screen bg-background px-10 sm:px-30 '>
             <Header />
             <main className='container py-8'>
                 <div className='mb-8'>
