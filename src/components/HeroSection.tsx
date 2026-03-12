@@ -75,7 +75,7 @@ export default function HeroSection() {
                             </Button>
 
                             <Button size='lg' variant='outline' className='group'>
-                                <Link href='/about' className="flex justify-center gap-2 items-center">
+                                <Link href='/about' className='flex justify-center gap-2 items-center'>
                                     Узнать больше
                                     <ChevronRight className='ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform' />
                                 </Link>
@@ -124,7 +124,7 @@ export default function HeroSection() {
                                 <div className='absolute inset-0 bg-grid-pattern opacity-20' />
                                 <div className='absolute inset-0 flex items-center justify-center'>
                                     <div className='relative'>
-                                        <span className='text-9xl animate-bounce'>⚽</span>
+                                        <img src='https://s10.iimage.su/s/12/gdg0LNTxWZCYPmKFvuTCQTK93Yuns1zkzqGp1nYkk.jpg' className='text-9xl' />
 
                                         {/* Плавающие элементы вокруг мяча */}
                                         <div className='absolute -top-8 -right-8 w-16 h-16 bg-primary/10 rounded-full blur-xl animate-pulse' />

@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
                 port: "",
                 pathname: "/**",
             },
+                        {
+                protocol: "https",
+                hostname: "iimg.su",
+                port: "",
+                pathname: "/**",
+            },
+            
         ],
     },
 };
