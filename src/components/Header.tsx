@@ -33,9 +33,7 @@ export default function Header() {
                 </div>
 
                 <div className='flex items-center gap-4'>
-                    <Button variant='ghost' size='icon' className='hidden md:flex'>
-                        <User className='h-5 w-5' />
-                    </Button>
+  
 
                     {/* Mobile Menu */}
                     <Sheet>
