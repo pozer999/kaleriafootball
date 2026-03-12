@@ -75,7 +75,7 @@ export default function HeroSection() {
                             </Button>
 
                             <Button size='lg' variant='outline' className='group'>
-                                <Link href='/about'>
+                                <Link href='/about' className="flex justify-center gap-2 items-center">
                                     Узнать больше
                                     <ChevronRight className='ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform' />
                                 </Link>

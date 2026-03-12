@@ -28,6 +28,7 @@ import {
     ChevronRight,
     Loader2,
     Upload,
+    AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -77,6 +78,58 @@ const levelOptions = [
     { value: "ADVANCED", label: "🔴 Продвинутый", color: "from-red-500 to-rose-500" },
 ];
 
+// Компонент безопасного изображения
+const SafeImage = ({ src, alt, className, width, height, fill }: any) => {
+    const [error, setError] = useState(false);
+    const [imageSrc, setImageSrc] = useState<string>("");
+
+    useEffect(() => {
+        if (src && typeof src === 'string') {
+            // Очищаем URL от пробелов и проверяем валидность
+            const cleanSrc = src.trim();
+            if (cleanSrc.startsWith('http://') || cleanSrc.startsWith('https://') || cleanSrc.startsWith('/')) {
+                setImageSrc(cleanSrc);
+                setError(false);
+            } else {
+                setError(true);
+            }
+        } else {
+            setError(true);
+        }
+    }, [src]);
+
+    if (!imageSrc || error) {
+        return (
+            <div className={`${className} flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10`}>
+                <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
+            </div>
+        );
+    }
+
+    if (fill) {
+        return (
+            <Image
+                src={imageSrc}
+                alt={alt || "Image"}
+                fill
+                className={className}
+                onError={() => setError(true)}
+            />
+        );
+    }
+
+    return (
+        <Image
+            src={imageSrc}
+            alt={alt || "Image"}
+            width={width}
+            height={height}
+            className={className}
+            onError={() => setError(true)}
+        />
+    );
+};
+
 export default function AdminPage() {
     const router = useRouter();
     const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -90,6 +143,7 @@ export default function AdminPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [filterPublished, setFilterPublished] = useState<"all" | "published" | "draft">("all");
     const [filterCategory, setFilterCategory] = useState<string | null>("all");
+    const [urlError, setUrlError] = useState<string | null>(null);
 
     const itemsPerPage = 10;
 
@@ -130,11 +184,15 @@ export default function AdminPage() {
     // Фильтрация уроков
     const filteredLessons = lessons.filter((lesson) => {
         const matchesSearch =
-            lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) || lesson.description?.toLowerCase().includes(searchTerm.toLowerCase());
+            lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            lesson.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesPublished = filterPublished === "all" ? true : filterPublished === "published" ? lesson.isPublished : !lesson.isPublished;
+        const matchesPublished = filterPublished === "all" ? true : 
+                                filterPublished === "published" ? lesson.isPublished : 
+                                !lesson.isPublished;
 
-        const matchesCategory = filterCategory === "all" ? true : lesson.category === filterCategory;
+        const matchesCategory = filterCategory === "all" ? true : 
+                               lesson.category === filterCategory;
 
         return matchesSearch && matchesPublished && matchesCategory;
     });
@@ -143,9 +201,28 @@ export default function AdminPage() {
     const totalPages = Math.ceil(filteredLessons.length / itemsPerPage);
     const paginatedLessons = filteredLessons.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+    // Валидация URL
+    const isValidUrl = (url: string) => {
+        if (!url) return true;
+        const trimmed = url.trim();
+        try {
+            new URL(trimmed);
+            return true;
+        } catch {
+            return trimmed.startsWith('/') || trimmed.startsWith('http://') || trimmed.startsWith('https://');
+        }
+    };
+
+    // Очистка URL от пробелов
+    const cleanUrl = (url: string) => {
+        if (!url) return '';
+        return url.trim();
+    };
+
     // Открыть форму создания
     const handleCreate = () => {
         setSelectedLesson(null);
+        setUrlError(null);
         setFormData({
             id: "",
             title: "",
@@ -166,6 +243,7 @@ export default function AdminPage() {
     // Открыть форму редактирования
     const handleEdit = (lesson: Lesson) => {
         setSelectedLesson(lesson);
+        setUrlError(null);
         setFormData({
             id: lesson.id,
             title: lesson.title,
@@ -174,11 +252,14 @@ export default function AdminPage() {
             category: lesson.category,
             level: lesson.level,
             duration: lesson.duration?.toString() || "",
-            mainImage: lesson.mainImage || "",
-            videoUrl: lesson.videoUrl || "",
+            mainImage: cleanUrl(lesson.mainImage || ""),
+            videoUrl: cleanUrl(lesson.videoUrl || ""),
             tags: lesson.tags.join(", "),
             isPublished: lesson.isPublished,
-            gallery: lesson.gallery || [],
+            gallery: (lesson.gallery || []).map(img => ({
+                ...img,
+                url: cleanUrl(img.url)
+            })),
         });
         setIsDialogOpen(true);
     };
@@ -186,10 +267,33 @@ export default function AdminPage() {
     // Сохранить урок
     const handleSave = async () => {
         try {
+            // Валидация URL перед сохранением
+            if (formData.mainImage && !isValidUrl(formData.mainImage)) {
+                setUrlError("Некорректный URL главного изображения");
+                return;
+            }
+            if (formData.videoUrl && !isValidUrl(formData.videoUrl)) {
+                setUrlError("Некорректный URL видео");
+                return;
+            }
+            for (const img of formData.gallery) {
+                if (img.url && !isValidUrl(img.url)) {
+                    setUrlError(`Некорректный URL в галерее: ${img.url}`);
+                    return;
+                }
+            }
+
             setSaving(true);
+            setUrlError(null);
 
             const payload = {
                 ...formData,
+                mainImage: cleanUrl(formData.mainImage),
+                videoUrl: cleanUrl(formData.videoUrl),
+                gallery: formData.gallery.map(img => ({
+                    ...img,
+                    url: cleanUrl(img.url)
+                })),
                 tags: formData.tags
                     .split(",")
                     .map((t) => t.trim())
@@ -209,9 +313,13 @@ export default function AdminPage() {
             if (res.ok) {
                 setIsDialogOpen(false);
                 fetchLessons();
+            } else {
+                const error = await res.json();
+                setUrlError(error.error || "Ошибка при сохранении");
             }
         } catch (error) {
             console.error("Error saving lesson:", error);
+            setUrlError("Ошибка при сохранении");
         } finally {
             setSaving(false);
         }
@@ -341,19 +449,13 @@ export default function AdminPage() {
                                         <div className='flex flex-col md:flex-row gap-4 items-start md:items-center'>
                                             {/* Превью */}
                                             <div className='w-full md:w-24 h-24 rounded-lg overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10 flex-shrink-0'>
-                                                {lesson.mainImage ? (
-                                                    <Image
-                                                        src={lesson.mainImage}
-                                                        alt={lesson.title}
-                                                        width={96}
-                                                        height={96}
-                                                        className='object-cover w-full h-full'
-                                                    />
-                                                ) : (
-                                                    <div className='w-full h-full flex items-center justify-center'>
-                                                        <ImageIcon className='h-8 w-8 text-muted-foreground/30' />
-                                                    </div>
-                                                )}
+                                                <SafeImage
+                                                    src={lesson.mainImage || ""}
+                                                    alt={lesson.title}
+                                                    width={96}
+                                                    height={96}
+                                                    className='object-cover w-full h-full'
+                                                />
                                             </div>
 
                                             {/* Информация */}
@@ -476,6 +578,14 @@ export default function AdminPage() {
                             <DialogDescription>Заполните информацию об уроке. Все поля отмеченные * обязательны.</DialogDescription>
                         </DialogHeader>
 
+                        {/* Ошибка URL */}
+                        {urlError && (
+                            <div className='bg-destructive/10 border border-destructive/20 rounded-lg p-4 flex items-center gap-3'>
+                                <AlertCircle className='h-5 w-5 text-destructive flex-shrink-0' />
+                                <p className='text-sm text-destructive'>{urlError}</p>
+                            </div>
+                        )}
+
                         <Tabs defaultValue='main' className='mt-4'>
                             <TabsList className='grid w-full grid-cols-4'>
                                 <TabsTrigger value='main'>Основное</TabsTrigger>
@@ -581,12 +691,30 @@ export default function AdminPage() {
                                     <Input
                                         id='mainImage'
                                         value={formData.mainImage}
-                                        onChange={(e) => setFormData({ ...formData, mainImage: e.target.value })}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            setFormData({ ...formData, mainImage: value });
+                                            setUrlError(null);
+                                        }}
+                                        onPaste={(e) => {
+                                            e.preventDefault();
+                                            const pastedText = e.clipboardData.getData('text');
+                                            setFormData({ ...formData, mainImage: pastedText.trim() });
+                                        }}
                                         placeholder='https://example.com/image.jpg'
+                                        className={!isValidUrl(formData.mainImage) && formData.mainImage ? 'border-destructive' : ''}
                                     />
-                                    {formData.mainImage && (
-                                        <div className='relative w-full h-48 rounded-lg overflow-hidden mt-2'>
-                                            <Image src={formData.mainImage} alt='Preview' fill className='object-cover' />
+                                    {formData.mainImage && !isValidUrl(formData.mainImage) && (
+                                        <p className='text-xs text-destructive mt-1'>Некорректный URL</p>
+                                    )}
+                                    {formData.mainImage && isValidUrl(formData.mainImage) && (
+                                        <div className='relative w-full h-48 rounded-lg overflow-hidden mt-2 border'>
+                                            <SafeImage
+                                                src={formData.mainImage}
+                                                alt='Preview'
+                                                fill
+                                                className='object-cover'
+                                            />
                                         </div>
                                     )}
                                 </div>
@@ -596,9 +724,22 @@ export default function AdminPage() {
                                     <Input
                                         id='videoUrl'
                                         value={formData.videoUrl}
-                                        onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            setFormData({ ...formData, videoUrl: value });
+                                            setUrlError(null);
+                                        }}
+                                        onPaste={(e) => {
+                                            e.preventDefault();
+                                            const pastedText = e.clipboardData.getData('text');
+                                            setFormData({ ...formData, videoUrl: pastedText.trim() });
+                                        }}
                                         placeholder='https://youtube.com/...'
+                                        className={!isValidUrl(formData.videoUrl) && formData.videoUrl ? 'border-destructive' : ''}
                                     />
+                                    {formData.videoUrl && !isValidUrl(formData.videoUrl) && (
+                                        <p className='text-xs text-destructive mt-1'>Некорректный URL</p>
+                                    )}
                                 </div>
                             </TabsContent>
 
@@ -616,17 +757,34 @@ export default function AdminPage() {
                                         <Card key={index} className='border'>
                                             <CardContent className='p-4'>
                                                 <div className='flex gap-4'>
-                                                    {img.url && (
-                                                        <div className='relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0'>
-                                                            <Image src={img.url} alt={img.caption || "Gallery"} fill className='object-cover' />
+                                                    {img.url && isValidUrl(img.url) && (
+                                                        <div className='relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border'>
+                                                            <SafeImage
+                                                                src={img.url}
+                                                                alt={img.caption || "Gallery"}
+                                                                fill
+                                                                className='object-cover'
+                                                            />
                                                         </div>
                                                     )}
                                                     <div className='flex-1 space-y-2'>
                                                         <Input
                                                             placeholder='URL изображения'
                                                             value={img.url}
-                                                            onChange={(e) => updateGalleryImage(index, "url", e.target.value)}
+                                                            onChange={(e) => {
+                                                                updateGalleryImage(index, "url", e.target.value);
+                                                                setUrlError(null);
+                                                            }}
+                                                            onPaste={(e) => {
+                                                                e.preventDefault();
+                                                                const pastedText = e.clipboardData.getData('text');
+                                                                updateGalleryImage(index, "url", pastedText.trim());
+                                                            }}
+                                                            className={!isValidUrl(img.url) && img.url ? 'border-destructive' : ''}
                                                         />
+                                                        {img.url && !isValidUrl(img.url) && (
+                                                            <p className='text-xs text-destructive'>Некорректный URL</p>
+                                                        )}
                                                         <Input
                                                             placeholder='Подпись (необязательно)'
                                                             value={img.caption || ""}
@@ -637,7 +795,7 @@ export default function AdminPage() {
                                                         variant='ghost'
                                                         size='icon'
                                                         onClick={() => removeGalleryImage(index)}
-                                                        className='text-destructive'
+                                                        className='text-destructive hover:text-destructive/80'
                                                     >
                                                         <X className='h-4 w-4' />
                                                     </Button>

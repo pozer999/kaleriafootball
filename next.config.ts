@@ -9,6 +9,18 @@ const nextConfig: NextConfig = {
                 port: "",
                 pathname: "/**",
             },
+            {
+                protocol: "https",
+                hostname: "xn-----6kco4daffv.xn--p1ai",
+                port: "",
+                pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "stevent.ru",
+                port: "",
+                pathname: "/**",
+            },
         ],
     },
 };
