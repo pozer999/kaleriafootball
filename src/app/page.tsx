@@ -17,17 +17,6 @@ async function getPopularLessons() {
             },
             orderBy: [{ views: "desc" }, { createdAt: "desc" }],
             take: 3,
-            select: {
-                id: true,
-                title: true,
-                description: true,
-                level: true,
-                duration: true,
-                mainImage: true,
-                views: true,
-                category: true,
-                createdAt: true,
-            },
         });
         return lessons;
     } catch (error) {
