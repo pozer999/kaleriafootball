@@ -135,8 +135,8 @@ export default function LessonFilters({ onFiltersChange }: LessonFiltersProps) {
             <div className='md:hidden'>
                 <Sheet>
                     <SheetTrigger>
-                            <SlidersHorizontal className='mr-2 h-4 w-4' />
-                            Фильтры и поиск
+                        <SlidersHorizontal className='mr-2 h-4 w-4' />
+                        Фильтры и поиск
                     </SheetTrigger>
                     <SheetContent side='bottom' className='h-[80vh]'>
                         <SheetHeader>

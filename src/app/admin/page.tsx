@@ -63,6 +63,7 @@ interface Lesson {
         name: string | null;
         email: string;
     };
+    url?: string;
 }
 
 const categoryOptions = [
@@ -84,10 +85,10 @@ const SafeImage = ({ src, alt, className, width, height, fill }: any) => {
     const [imageSrc, setImageSrc] = useState<string>("");
 
     useEffect(() => {
-        if (src && typeof src === 'string') {
+        if (src && typeof src === "string") {
             // Очищаем URL от пробелов и проверяем валидность
             const cleanSrc = src.trim();
-            if (cleanSrc.startsWith('http://') || cleanSrc.startsWith('https://') || cleanSrc.startsWith('/')) {
+            if (cleanSrc.startsWith("http://") || cleanSrc.startsWith("https://") || cleanSrc.startsWith("/")) {
                 setImageSrc(cleanSrc);
                 setError(false);
             } else {
@@ -101,33 +102,16 @@ const SafeImage = ({ src, alt, className, width, height, fill }: any) => {
     if (!imageSrc || error) {
         return (
             <div className={`${className} flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10`}>
-                <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
+                <ImageIcon className='h-8 w-8 text-muted-foreground/30' />
             </div>
         );
     }
 
     if (fill) {
-        return (
-            <Image
-                src={imageSrc}
-                alt={alt || "Image"}
-                fill
-                className={className}
-                onError={() => setError(true)}
-            />
-        );
+        return <Image src={imageSrc} alt={alt || "Image"} fill className={className} onError={() => setError(true)} />;
     }
 
-    return (
-        <Image
-            src={imageSrc}
-            alt={alt || "Image"}
-            width={width}
-            height={height}
-            className={className}
-            onError={() => setError(true)}
-        />
-    );
+    return <Image src={imageSrc} alt={alt || "Image"} width={width} height={height} className={className} onError={() => setError(true)} />;
 };
 
 export default function AdminPage() {
@@ -161,6 +145,7 @@ export default function AdminPage() {
         tags: "",
         isPublished: false,
         gallery: [] as GalleryImage[],
+        url: "",
     });
 
     // Загрузка уроков
@@ -184,15 +169,11 @@ export default function AdminPage() {
     // Фильтрация уроков
     const filteredLessons = lessons.filter((lesson) => {
         const matchesSearch =
-            lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            lesson.description?.toLowerCase().includes(searchTerm.toLowerCase());
+            lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) || lesson.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesPublished = filterPublished === "all" ? true : 
-                                filterPublished === "published" ? lesson.isPublished : 
-                                !lesson.isPublished;
+        const matchesPublished = filterPublished === "all" ? true : filterPublished === "published" ? lesson.isPublished : !lesson.isPublished;
 
-        const matchesCategory = filterCategory === "all" ? true : 
-                               lesson.category === filterCategory;
+        const matchesCategory = filterCategory === "all" ? true : lesson.category === filterCategory;
 
         return matchesSearch && matchesPublished && matchesCategory;
     });
@@ -209,13 +190,13 @@ export default function AdminPage() {
             new URL(trimmed);
             return true;
         } catch {
-            return trimmed.startsWith('/') || trimmed.startsWith('http://') || trimmed.startsWith('https://');
+            return trimmed.startsWith("/") || trimmed.startsWith("http://") || trimmed.startsWith("https://");
         }
     };
 
     // Очистка URL от пробелов
     const cleanUrl = (url: string) => {
-        if (!url) return '';
+        if (!url) return "";
         return url.trim();
     };
 
@@ -236,6 +217,7 @@ export default function AdminPage() {
             tags: "",
             isPublished: false,
             gallery: [],
+            url: "",
         });
         setIsDialogOpen(true);
     };
@@ -256,10 +238,11 @@ export default function AdminPage() {
             videoUrl: cleanUrl(lesson.videoUrl || ""),
             tags: lesson.tags.join(", "),
             isPublished: lesson.isPublished,
-            gallery: (lesson.gallery || []).map(img => ({
+            gallery: (lesson.gallery || []).map((img) => ({
                 ...img,
-                url: cleanUrl(img.url)
+                url: cleanUrl(img.url),
             })),
+            url: lesson.url || "",
         });
         setIsDialogOpen(true);
     };
@@ -290,15 +273,16 @@ export default function AdminPage() {
                 ...formData,
                 mainImage: cleanUrl(formData.mainImage),
                 videoUrl: cleanUrl(formData.videoUrl),
-                gallery: formData.gallery.map(img => ({
+                gallery: formData.gallery.map((img) => ({
                     ...img,
-                    url: cleanUrl(img.url)
+                    url: cleanUrl(img.url),
                 })),
                 tags: formData.tags
                     .split(",")
                     .map((t) => t.trim())
                     .filter((t) => t),
                 duration: formData.duration ? parseInt(formData.duration) : null,
+                url: formData.url,
             };
 
             const url = "/api/admin/lessons";
@@ -626,6 +610,16 @@ export default function AdminPage() {
                                         rows={6}
                                     />
                                 </div>
+                                <div className='space-y-2'>
+                                    <Label htmlFor='url'>Ссылка на урок</Label>
+                                    <Textarea
+                                        id='url'
+                                        value={formData.url}
+                                        onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                                        placeholder='Полное содержание урока'
+                                        rows={6}
+                                    />
+                                </div>
 
                                 <div className='grid grid-cols-2 gap-4'>
                                     <div className='space-y-2'>
@@ -698,23 +692,18 @@ export default function AdminPage() {
                                         }}
                                         onPaste={(e) => {
                                             e.preventDefault();
-                                            const pastedText = e.clipboardData.getData('text');
+                                            const pastedText = e.clipboardData.getData("text");
                                             setFormData({ ...formData, mainImage: pastedText.trim() });
                                         }}
                                         placeholder='https://example.com/image.jpg'
-                                        className={!isValidUrl(formData.mainImage) && formData.mainImage ? 'border-destructive' : ''}
+                                        className={!isValidUrl(formData.mainImage) && formData.mainImage ? "border-destructive" : ""}
                                     />
                                     {formData.mainImage && !isValidUrl(formData.mainImage) && (
                                         <p className='text-xs text-destructive mt-1'>Некорректный URL</p>
                                     )}
                                     {formData.mainImage && isValidUrl(formData.mainImage) && (
                                         <div className='relative w-full h-48 rounded-lg overflow-hidden mt-2 border'>
-                                            <SafeImage
-                                                src={formData.mainImage}
-                                                alt='Preview'
-                                                fill
-                                                className='object-cover'
-                                            />
+                                            <SafeImage src={formData.mainImage} alt='Preview' fill className='object-cover' />
                                         </div>
                                     )}
                                 </div>
@@ -731,11 +720,11 @@ export default function AdminPage() {
                                         }}
                                         onPaste={(e) => {
                                             e.preventDefault();
-                                            const pastedText = e.clipboardData.getData('text');
+                                            const pastedText = e.clipboardData.getData("text");
                                             setFormData({ ...formData, videoUrl: pastedText.trim() });
                                         }}
                                         placeholder='https://youtube.com/...'
-                                        className={!isValidUrl(formData.videoUrl) && formData.videoUrl ? 'border-destructive' : ''}
+                                        className={!isValidUrl(formData.videoUrl) && formData.videoUrl ? "border-destructive" : ""}
                                     />
                                     {formData.videoUrl && !isValidUrl(formData.videoUrl) && (
                                         <p className='text-xs text-destructive mt-1'>Некорректный URL</p>
@@ -759,12 +748,7 @@ export default function AdminPage() {
                                                 <div className='flex gap-4'>
                                                     {img.url && isValidUrl(img.url) && (
                                                         <div className='relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border'>
-                                                            <SafeImage
-                                                                src={img.url}
-                                                                alt={img.caption || "Gallery"}
-                                                                fill
-                                                                className='object-cover'
-                                                            />
+                                                            <SafeImage src={img.url} alt={img.caption || "Gallery"} fill className='object-cover' />
                                                         </div>
                                                     )}
                                                     <div className='flex-1 space-y-2'>
@@ -777,10 +761,10 @@ export default function AdminPage() {
                                                             }}
                                                             onPaste={(e) => {
                                                                 e.preventDefault();
-                                                                const pastedText = e.clipboardData.getData('text');
+                                                                const pastedText = e.clipboardData.getData("text");
                                                                 updateGalleryImage(index, "url", pastedText.trim());
                                                             }}
-                                                            className={!isValidUrl(img.url) && img.url ? 'border-destructive' : ''}
+                                                            className={!isValidUrl(img.url) && img.url ? "border-destructive" : ""}
                                                         />
                                                         {img.url && !isValidUrl(img.url) && (
                                                             <p className='text-xs text-destructive'>Некорректный URL</p>
