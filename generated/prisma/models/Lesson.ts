@@ -54,6 +54,7 @@ export type LessonMinAggregateOutputType = {
   authorId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  url: string | null
 }
 
 export type LessonMaxAggregateOutputType = {
@@ -72,6 +73,7 @@ export type LessonMaxAggregateOutputType = {
   authorId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  url: string | null
 }
 
 export type LessonCountAggregateOutputType = {
@@ -91,6 +93,7 @@ export type LessonCountAggregateOutputType = {
   authorId: number
   createdAt: number
   updatedAt: number
+  url: number
   _all: number
 }
 
@@ -123,6 +126,7 @@ export type LessonMinAggregateInputType = {
   authorId?: true
   createdAt?: true
   updatedAt?: true
+  url?: true
 }
 
 export type LessonMaxAggregateInputType = {
@@ -141,6 +145,7 @@ export type LessonMaxAggregateInputType = {
   authorId?: true
   createdAt?: true
   updatedAt?: true
+  url?: true
 }
 
 export type LessonCountAggregateInputType = {
@@ -160,6 +165,7 @@ export type LessonCountAggregateInputType = {
   authorId?: true
   createdAt?: true
   updatedAt?: true
+  url?: true
   _all?: true
 }
 
@@ -266,6 +272,7 @@ export type LessonGroupByOutputType = {
   authorId: string | null
   createdAt: Date
   updatedAt: Date
+  url: string | null
   _count: LessonCountAggregateOutputType | null
   _avg: LessonAvgAggregateOutputType | null
   _sum: LessonSumAggregateOutputType | null
@@ -273,7 +280,7 @@ export type LessonGroupByOutputType = {
   _max: LessonMaxAggregateOutputType | null
 }
 
-type GetLessonGroupByPayload<T extends LessonGroupByArgs> = Prisma.PrismaPromise<
+export type GetLessonGroupByPayload<T extends LessonGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<LessonGroupByOutputType, T['by']> &
       {
@@ -308,6 +315,7 @@ export type LessonWhereInput = {
   authorId?: Prisma.StringNullableFilter<"Lesson"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
+  url?: Prisma.StringNullableFilter<"Lesson"> | string | null
   gallery?: Prisma.GalleryImageListRelationFilter
   author?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
@@ -329,6 +337,7 @@ export type LessonOrderByWithRelationInput = {
   authorId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  url?: Prisma.SortOrderInput | Prisma.SortOrder
   gallery?: Prisma.GalleryImageOrderByRelationAggregateInput
   author?: Prisma.UserOrderByWithRelationInput
 }
@@ -353,6 +362,7 @@ export type LessonWhereUniqueInput = Prisma.AtLeast<{
   authorId?: Prisma.StringNullableFilter<"Lesson"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
+  url?: Prisma.StringNullableFilter<"Lesson"> | string | null
   gallery?: Prisma.GalleryImageListRelationFilter
   author?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
@@ -374,6 +384,7 @@ export type LessonOrderByWithAggregationInput = {
   authorId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  url?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.LessonCountOrderByAggregateInput
   _avg?: Prisma.LessonAvgOrderByAggregateInput
   _max?: Prisma.LessonMaxOrderByAggregateInput
@@ -401,6 +412,7 @@ export type LessonScalarWhereWithAggregatesInput = {
   authorId?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Lesson"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Lesson"> | Date | string
+  url?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
 }
 
 export type LessonCreateInput = {
@@ -419,6 +431,7 @@ export type LessonCreateInput = {
   isPublished?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  url?: string | null
   gallery?: Prisma.GalleryImageCreateNestedManyWithoutLessonInput
   author?: Prisma.UserCreateNestedOneWithoutLessonsInput
 }
@@ -440,6 +453,7 @@ export type LessonUncheckedCreateInput = {
   authorId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  url?: string | null
   gallery?: Prisma.GalleryImageUncheckedCreateNestedManyWithoutLessonInput
 }
 
@@ -459,6 +473,7 @@ export type LessonUpdateInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gallery?: Prisma.GalleryImageUpdateManyWithoutLessonNestedInput
   author?: Prisma.UserUpdateOneWithoutLessonsNestedInput
 }
@@ -480,6 +495,7 @@ export type LessonUncheckedUpdateInput = {
   authorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gallery?: Prisma.GalleryImageUncheckedUpdateManyWithoutLessonNestedInput
 }
 
@@ -500,6 +516,7 @@ export type LessonCreateManyInput = {
   authorId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  url?: string | null
 }
 
 export type LessonUpdateManyMutationInput = {
@@ -518,6 +535,7 @@ export type LessonUpdateManyMutationInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type LessonUncheckedUpdateManyInput = {
@@ -537,6 +555,7 @@ export type LessonUncheckedUpdateManyInput = {
   authorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type LessonListRelationFilter = {
@@ -574,6 +593,7 @@ export type LessonCountOrderByAggregateInput = {
   authorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  url?: Prisma.SortOrder
 }
 
 export type LessonAvgOrderByAggregateInput = {
@@ -598,6 +618,7 @@ export type LessonMaxOrderByAggregateInput = {
   authorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  url?: Prisma.SortOrder
 }
 
 export type LessonMinOrderByAggregateInput = {
@@ -616,6 +637,7 @@ export type LessonMinOrderByAggregateInput = {
   authorId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  url?: Prisma.SortOrder
 }
 
 export type LessonSumOrderByAggregateInput = {
@@ -738,6 +760,7 @@ export type LessonCreateWithoutAuthorInput = {
   isPublished?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  url?: string | null
   gallery?: Prisma.GalleryImageCreateNestedManyWithoutLessonInput
 }
 
@@ -757,6 +780,7 @@ export type LessonUncheckedCreateWithoutAuthorInput = {
   isPublished?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  url?: string | null
   gallery?: Prisma.GalleryImageUncheckedCreateNestedManyWithoutLessonInput
 }
 
@@ -806,6 +830,7 @@ export type LessonScalarWhereInput = {
   authorId?: Prisma.StringNullableFilter<"Lesson"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
+  url?: Prisma.StringNullableFilter<"Lesson"> | string | null
 }
 
 export type LessonCreateWithoutGalleryInput = {
@@ -824,6 +849,7 @@ export type LessonCreateWithoutGalleryInput = {
   isPublished?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  url?: string | null
   author?: Prisma.UserCreateNestedOneWithoutLessonsInput
 }
 
@@ -844,6 +870,7 @@ export type LessonUncheckedCreateWithoutGalleryInput = {
   authorId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  url?: string | null
 }
 
 export type LessonCreateOrConnectWithoutGalleryInput = {
@@ -878,6 +905,7 @@ export type LessonUpdateWithoutGalleryInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   author?: Prisma.UserUpdateOneWithoutLessonsNestedInput
 }
 
@@ -898,6 +926,7 @@ export type LessonUncheckedUpdateWithoutGalleryInput = {
   authorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type LessonCreateManyAuthorInput = {
@@ -916,6 +945,7 @@ export type LessonCreateManyAuthorInput = {
   isPublished?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  url?: string | null
 }
 
 export type LessonUpdateWithoutAuthorInput = {
@@ -934,6 +964,7 @@ export type LessonUpdateWithoutAuthorInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gallery?: Prisma.GalleryImageUpdateManyWithoutLessonNestedInput
 }
 
@@ -953,6 +984,7 @@ export type LessonUncheckedUpdateWithoutAuthorInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gallery?: Prisma.GalleryImageUncheckedUpdateManyWithoutLessonNestedInput
 }
 
@@ -972,6 +1004,7 @@ export type LessonUncheckedUpdateManyWithoutAuthorInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1022,6 +1055,7 @@ export type LessonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   authorId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  url?: boolean
   gallery?: boolean | Prisma.Lesson$galleryArgs<ExtArgs>
   author?: boolean | Prisma.Lesson$authorArgs<ExtArgs>
   _count?: boolean | Prisma.LessonCountOutputTypeDefaultArgs<ExtArgs>
@@ -1044,6 +1078,7 @@ export type LessonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   authorId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  url?: boolean
   author?: boolean | Prisma.Lesson$authorArgs<ExtArgs>
 }, ExtArgs["result"]["lesson"]>
 
@@ -1064,6 +1099,7 @@ export type LessonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   authorId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  url?: boolean
   author?: boolean | Prisma.Lesson$authorArgs<ExtArgs>
 }, ExtArgs["result"]["lesson"]>
 
@@ -1084,9 +1120,10 @@ export type LessonSelectScalar = {
   authorId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  url?: boolean
 }
 
-export type LessonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "content" | "category" | "level" | "duration" | "mainImage" | "videoUrl" | "tags" | "views" | "likes" | "isPublished" | "authorId" | "createdAt" | "updatedAt", ExtArgs["result"]["lesson"]>
+export type LessonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "content" | "category" | "level" | "duration" | "mainImage" | "videoUrl" | "tags" | "views" | "likes" | "isPublished" | "authorId" | "createdAt" | "updatedAt" | "url", ExtArgs["result"]["lesson"]>
 export type LessonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   gallery?: boolean | Prisma.Lesson$galleryArgs<ExtArgs>
   author?: boolean | Prisma.Lesson$authorArgs<ExtArgs>
@@ -1122,6 +1159,7 @@ export type $LessonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     authorId: string | null
     createdAt: Date
     updatedAt: Date
+    url: string | null
   }, ExtArgs["result"]["lesson"]>
   composites: {}
 }
@@ -1563,6 +1601,7 @@ export interface LessonFieldRefs {
   readonly authorId: Prisma.FieldRef<"Lesson", 'String'>
   readonly createdAt: Prisma.FieldRef<"Lesson", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Lesson", 'DateTime'>
+  readonly url: Prisma.FieldRef<"Lesson", 'String'>
 }
     
 

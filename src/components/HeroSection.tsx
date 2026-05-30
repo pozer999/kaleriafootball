@@ -2,9 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Trophy, Heart, Users, Sparkles, Star, Award, ChevronRight } from "lucide-react";
+import { ArrowRight, Award, ChevronRight, Heart, Sparkles, Star, Trophy, Users } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function HeroSection() {
     return (
@@ -124,7 +123,7 @@ export default function HeroSection() {
                                 <div className='absolute inset-0 bg-grid-pattern opacity-20' />
                                 <div className='absolute inset-0 flex items-center justify-center'>
                                     <div className='relative'>
-                                        <img src='https://s10.iimage.su/s/12/gdg0LNTxWZCYPmKFvuTCQTK93Yuns1zkzqGp1nYkk.jpg' className='text-9xl' />
+                                        <img src='/a.jpg' className='text-9xl' />
 
                                         {/* Плавающие элементы вокруг мяча */}
                                         <div className='absolute -top-8 -right-8 w-16 h-16 bg-primary/10 rounded-full blur-xl animate-pulse' />

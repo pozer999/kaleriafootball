@@ -147,56 +147,53 @@ export default async function Home() {
                         <div className='grid md:grid-cols-3 gap-6'>
                             {popularLessons.length > 0
                                 ? popularLessons.map((lesson) => (
-                                      <Card
-                                          key={lesson.id}
-                                          className='group overflow-hidden border-0 bg-background/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2'
-                                      >
-                                          <div className='relative h-56 overflow-hidden'>
-                                              <div className='absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent z-10' />
-                                              {lesson.mainImage ? (
-                                                  <Image
-                                                      src={lesson.mainImage}
-                                                      alt={lesson.title}
-                                                      fill
-                                                      className='object-cover group-hover:scale-110 transition-transform duration-700'
-                                                  />
-                                              ) : (
-                                                  <div className='w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center'>
-                                                      <span className='text-4xl'>⚽</span>
-                                                  </div>
-                                              )}
-                                              <div
-                                                  className={`absolute top-4 right-4 z-20 px-3 py-1 rounded-full bg-gradient-to-r ${levelMap[lesson.level].color} text-white text-sm font-medium`}
-                                              >
-                                                  {levelMap[lesson.level].label}
-                                              </div>
-                                          </div>
-                                          <CardHeader>
-                                              <div className='flex items-center gap-2 mb-2'>
-                                                  <span className='text-sm text-muted-foreground'>{categoryMap[lesson.category]}</span>
-                                              </div>
-                                              <CardTitle className='text-2xl'>{lesson.title}</CardTitle>
-                                              <CardDescription className='text-base line-clamp-2'>{lesson.description}</CardDescription>
-                                          </CardHeader>
-                                          <CardContent>
-                                              <div className='flex items-center justify-between text-sm'>
-                                                  <div className='flex items-center gap-2'>
-                                                      <Clock className='w-4 h-4 text-muted-foreground' />
-                                                      <span>{lesson.duration || "45"} мин</span>
-                                                  </div>
-                                                  <div className='flex items-center gap-2'>
-                                                      <Users className='w-4 h-4 text-muted-foreground' />
-                                                      <span>{lesson.views} просмотров</span>
+                                      <Link key={lesson.id} href={`/lessons/${lesson.id}`}>
+                                          <Card className='group overflow-hidden border-0 bg-background/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2'>
+                                              <div className='relative h-56 overflow-hidden'>
+                                                  <div className='absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent z-10' />
+                                                  {lesson.mainImage ? (
+                                                      <Image
+                                                          src={lesson.mainImage}
+                                                          alt={lesson.title}
+                                                          fill
+                                                          className='object-cover group-hover:scale-110 transition-transform duration-700'
+                                                      />
+                                                  ) : (
+                                                      <div className='w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center'>
+                                                          <span className='text-4xl'>⚽</span>
+                                                      </div>
+                                                  )}
+                                                  <div
+                                                      className={`absolute top-4 right-4 z-20 px-3 py-1 rounded-full bg-gradient-to-r ${levelMap[lesson.level].color} text-white text-sm font-medium`}
+                                                  >
+                                                      {levelMap[lesson.level].label}
                                                   </div>
                                               </div>
-                                              <Button className='w-full mt-6 group' variant='secondary' asChild>
-                                                  <Link href={`/lessons/${lesson.id}`} className='flex items-center justify-center gap-2'>
+                                              <CardHeader>
+                                                  <div className='flex items-center gap-2 mb-2'>
+                                                      <span className='text-sm text-muted-foreground'>{categoryMap[lesson.category]}</span>
+                                                  </div>
+                                                  <CardTitle className='text-2xl'>{lesson.title}</CardTitle>
+                                                  <CardDescription className='text-base line-clamp-2'>{lesson.description}</CardDescription>
+                                              </CardHeader>
+                                              <CardContent>
+                                                  <div className='flex items-center justify-between text-sm'>
+                                                      <div className='flex items-center gap-2'>
+                                                          <Clock className='w-4 h-4 text-muted-foreground' />
+                                                          <span>{lesson.duration || "45"} мин</span>
+                                                      </div>
+                                                      <div className='flex items-center gap-2'>
+                                                          <Users className='w-4 h-4 text-muted-foreground' />
+                                                          <span>{lesson.views} просмотров</span>
+                                                      </div>
+                                                  </div>
+                                                  <Button className='w-full mt-6 group' variant='secondary' asChild>
                                                       Начать урок
                                                       <ArrowRight className='ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform' />
-                                                  </Link>
-                                              </Button>
-                                          </CardContent>
-                                      </Card>
+                                                  </Button>
+                                              </CardContent>
+                                          </Card>{" "}
+                                      </Link>
                                   ))
                                 : // Плейсхолдеры если нет уроков
                                   [...Array(3)].map((_, idx) => (
